@@ -1,10 +1,11 @@
 #include <Arduino.h>
 #include <stdio.h>
 
-#define MAX_INPUT_LENGTH 64  // Maximum length of the input buffer
+#define MAX_INPUT_LENGTH 64 // Maximum length of the input buffer
 
-char inputBuffer[MAX_INPUT_LENGTH];  // Array to hold the incoming data
-int inputIndex = 0; 
+int readStringFromSerial(char *buffer, int maxLength);
+
+char inputBuffer[MAX_INPUT_LENGTH]; // Array to hold the incoming data
 
 void setup()
 {
@@ -17,26 +18,55 @@ void setup()
 
 void loop()
 {
-    // Check if data is available to read
-    if (Serial.available() > 0)
+    // Serial.println("loop() ");
+    int length = readStringFromSerial(inputBuffer, MAX_INPUT_LENGTH);
+
+    if (length > 0)
     {
+        // Print the received string
+        Serial.print("You typed [");
+        Serial.print(inputBuffer);
+        Serial.print("]\n");
+    }
+}
+
+// Function that reads a string from serial until newline
+// Returns: number of characters read (0 if nothing or only newline was read)
+int readStringFromSerial(char *buffer, int maxLength)
+{
+    int index = 0;
+
+    // Wait for data to be available
+    while (1)
+    {
+        if (Serial.available() <= 0) {
+            continue; // No data available, keep waiting
+        }
         // Read the incoming byte
         char incomingChar = Serial.read();
 
-        if (incomingChar == '\n' || incomingChar == '\r') {
-            if (inputIndex > 0) {
-                Serial.write('\n');  // Print a newline character
-                inputBuffer[inputIndex] = '\0';  // Null-terminate the string
-                Serial.print("You typed: ");
-                Serial.println(inputBuffer);  // Echo the input back to the serial monitor
-                inputIndex = 0;  // Reset the index for the next input
+        // If the incoming char is a newline, terminate the string
+        if (incomingChar == '\n' || incomingChar == '\r')
+        {
+            if (index > 0)
+            { // Only process if buffer contains data
+                Serial.write('\n'); // Echo the newline character
+                // Add null terminator to make it a proper C string
+                buffer[index] = '\0';
+                // index = 0; // Reset index for next input
+                return index; // Return the length of the string (without null terminator)
             }
-        } else if (inputIndex < MAX_INPUT_LENGTH - 1) {
-            Serial.write(incomingChar);  // Echo the character back immediately
-            inputBuffer[inputIndex++] = incomingChar;  // Store the character in the buffer
-        } else {
-            Serial.println("Input too long!");  // Handle buffer overflow
-            inputIndex = 0;  // Reset the index to prevent overflow
+        }
+        // Otherwise, add the incoming character to the buffer if there's room
+        else if (index < maxLength - 1)
+        {
+            Serial.write(incomingChar); // Echo the character back immediately
+            // Leave room for null terminator
+            buffer[index] = incomingChar;
+            index++;
         }
     }
+
+    // If we reach here without returning, it means we didn't get a complete line yet
+    return 0;
 }
