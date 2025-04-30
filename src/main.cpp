@@ -41,9 +41,8 @@ void loop() {
         // Print the arguments
         Serial.print("Arguments:\n");
         for (int i = 0; i < MAX_ARGS_COUNT; i++) {
-            if (argsArray[i][0] == '\0') {
-                break;
-            }
+            if (argsArray[i][0] == '\0') { break; }
+
             Serial.print("arg[");
             Serial.print(i);
             Serial.print("]: ");
