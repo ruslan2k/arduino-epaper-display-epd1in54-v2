@@ -33,7 +33,6 @@ paint.DrawStringAt
 paint.GetHeight
 paint.GetImage
 paint.GetWidth
-paint.h
 paint.SetHeight
 paint.SetWidth
 ```
