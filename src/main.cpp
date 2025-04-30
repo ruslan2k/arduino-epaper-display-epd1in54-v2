@@ -9,8 +9,7 @@ int readStringFromSerial(char *buffer, int maxLength);
 
 char inputBuffer[MAX_INPUT_LENGTH]; // Array to hold the incoming data
 
-void setup()
-{
+void setup() {
     Serial.begin(9600);
 
     Serial.println("Arduino Serial Echo");
