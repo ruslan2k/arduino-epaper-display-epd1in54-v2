@@ -1,9 +1,19 @@
 #include <Arduino.h>
 #include <stdio.h>
+#include <SPI.h>
+#include "../lib/epd1in54_V2.h"
+#include "../lib/imagedata.h"
+#include "../lib/epdpaint.h"
+
+// Epd epd;
+// unsigned char image[1024];
+// Paint paint(image, 0, 0);
 
 #define MAX_INPUT_LENGTH 60 // Maximum length of the input buffer
 #define MAX_ARGS_COUNT 5    // Maximum number of arguments
 #define MAX_ARG_LENGTH 12   // Maximum length of each argument
+#define COLORED     0
+#define UNCOLORED   1
 
 int readStringFromSerial(char *buffer, int maxLength);
 int splitString(char *input, char output[MAX_ARGS_COUNT][MAX_ARG_LENGTH], int maxArgs);
@@ -39,15 +49,15 @@ void loop()
     Serial.print("Arguments:\n");
     for (int i = 0; i < count; i++)
     {
-        // if (argsArray[i][0] == '\0')
-        // {
-        //     break;
-        // }
-
         Serial.print("arg[");
         Serial.print(i);
         Serial.print("]: ");
         Serial.println(argsArray[i]);
+    }
+
+    if (count > 0 && strcmp(argsArray[0], "ldirinit") == 0) {
+        Serial.println("LDirInit command received");
+        // Add your LDirInit command handling code here
     }
 }
 
