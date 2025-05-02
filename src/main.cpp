@@ -65,6 +65,11 @@ void loop()
         epd.LDirInit();
         return;
     }
+    if (strcmp(argsArray[0], "hdirinit") == 0) {
+        Serial.println("HDirInit command received");
+        epd.HDirInit();
+        return;
+    }
     if (strcmp(argsArray[0], "clear") == 0) {
         Serial.println("Clear command received");
         epd.Clear();
@@ -74,6 +79,46 @@ void loop()
         Serial.println("Sleep command received");
         epd.Sleep();
         return;
+    }
+
+    if (strcmp(argsArray[0], "10") == 0) {
+        Serial.println("e-Paper paint 10");
+
+        paint.SetWidth(200);
+        paint.SetHeight(24);
+
+        paint.Clear(COLORED);
+        paint.DrawStringAt(30, 4, "Hello world!", &Font16, UNCOLORED);
+        epd.SetFrameMemory(paint.GetImage(), 0, 10, paint.GetWidth(), paint.GetHeight());
+        return;
+    }
+    if (strcmp(argsArray[0], "20") == 0) {
+        Serial.println("e-Paper paint 20");
+
+        paint.SetWidth(200);
+        paint.SetHeight(24);
+
+        paint.Clear(UNCOLORED);
+        paint.DrawStringAt(30, 4, "e-Paper Demo", &Font16, COLORED);
+        epd.SetFrameMemory(paint.GetImage(), 0, 30, paint.GetWidth(), paint.GetHeight());
+        return;
+    }
+
+    if (strcmp(argsArray[0], "90") == 0) {
+        paint.SetWidth(50);
+        paint.SetHeight(60);
+        paint.Clear(UNCOLORED);
+      
+        char i = 0;
+        char str[10][10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+        for (i = 0; i < 10; i++) {
+          paint.Clear(UNCOLORED);
+          paint.DrawStringAt(10, 10, str[i], &Font24, COLORED);
+          epd.SetFrameMemoryPartial(paint.GetImage(), 80, 70, paint.GetWidth(), paint.GetHeight());
+          epd.DisplayPartFrame();
+          delay(100);
+        }
+        return;      
     }
 }
 
