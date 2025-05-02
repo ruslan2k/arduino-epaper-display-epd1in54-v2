@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include <stdio.h>
 #include <SPI.h>
-#include "../lib/epd1in54_V2.h"
-#include "../lib/imagedata.h"
-#include "../lib/epdpaint.h"
+#include "epd1in54_V2.h"
+#include "imagedata.h"
+#include "epdpaint.h"
 
-// Epd epd;
-// unsigned char image[1024];
-// Paint paint(image, 0, 0);
+Epd epd;
+unsigned char image[1024];
+Paint paint(image, 0, 0);
 
 #define MAX_INPUT_LENGTH 60 // Maximum length of the input buffer
 #define MAX_ARGS_COUNT 5    // Maximum number of arguments
@@ -45,6 +45,11 @@ void loop()
 
     int count = splitString(inputBuffer, argsArray, MAX_ARGS_COUNT);
 
+    if (count <= 0) {
+        Serial.println("No arguments found");
+        return;
+    }
+
     // Print the arguments
     Serial.print("Arguments:\n");
     for (int i = 0; i < count; i++)
@@ -55,9 +60,20 @@ void loop()
         Serial.println(argsArray[i]);
     }
 
-    if (count > 0 && strcmp(argsArray[0], "ldirinit") == 0) {
+    if (strcmp(argsArray[0], "ldirinit") == 0) {
         Serial.println("LDirInit command received");
-        // Add your LDirInit command handling code here
+        epd.LDirInit();
+        return;
+    }
+    if (strcmp(argsArray[0], "clear") == 0) {
+        Serial.println("Clear command received");
+        epd.Clear();
+        return;
+    }
+    if (strcmp(argsArray[0], "sleep") == 0) {
+        Serial.println("Sleep command received");
+        epd.Sleep();
+        return;
     }
 }
 
