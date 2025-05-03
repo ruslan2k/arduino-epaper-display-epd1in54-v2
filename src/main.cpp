@@ -24,100 +24,86 @@ void setup()
 {
     Serial.begin(9600);
 
-    Serial.println("Arduino Serial Echo");
-    Serial.println("Type something to see it echoed back!");
+    Serial.println("Arduino Serial Echo. Type something to see it echoed back!");
 }
 
 void loop()
 {
+    Serial.println("Loop");
     char argsArray[MAX_ARGS_COUNT][MAX_ARG_LENGTH]; // Array to hold the arguments
     int length = readStringFromSerial(inputBuffer, MAX_INPUT_LENGTH);
-    // char *token;
 
     if (length <= 0) {
         return;
     }
 
     // Print the received string
-    Serial.print("You typed [");
-    Serial.print(inputBuffer);
-    Serial.print("]\n");
+    Serial.print("You typed: ");
+    Serial.println(inputBuffer);
 
     int count = splitString(inputBuffer, argsArray, MAX_ARGS_COUNT);
-
     if (count <= 0) {
         Serial.println("No arguments found");
         return;
     }
 
-    // Print the arguments
-    Serial.print("Arguments:\n");
     for (int i = 0; i < count; i++)
     {
-        Serial.print("arg[");
         Serial.print(i);
-        Serial.print("]: ");
+        Serial.print(" = ");
         Serial.println(argsArray[i]);
     }
 
-    if (strcmp(argsArray[0], "ldirinit") == 0) {
-        Serial.println("LDirInit command received");
+    if (strcmp(argsArray[0], "ldir") == 0) {
+        Serial.println("LDirInit");
         epd.LDirInit();
         return;
     }
-    if (strcmp(argsArray[0], "hdirinit") == 0) {
-        Serial.println("HDirInit command received");
+    if (strcmp(argsArray[0], "hdir") == 0) {
+        Serial.println("HDirInit");
         epd.HDirInit();
         return;
     }
     if (strcmp(argsArray[0], "clear") == 0) {
-        Serial.println("Clear command received");
+        Serial.println("Clear");
         epd.Clear();
         return;
     }
-    if (strcmp(argsArray[0], "sleep") == 0) {
-        Serial.println("Sleep command received");
-        epd.Sleep();
+    // if (strcmp(argsArray[0], "sleep") == 0) {
+    //     Serial.println("Sleep command received");
+    //     epd.Sleep();
+    //     return;
+    // }
+
+    if (strcmp(argsArray[0], "80") == 0) {
+        paint.SetWidth(200);
+        paint.SetHeight(24);
+
+        paint.Clear(UNCOLORED);
+        paint.DrawStringAt(30, 4, "e-Paper Demo", &Font16, COLORED);
+        epd.SetFrameMemory(paint.GetImage(), 0, 30, paint.GetWidth(), paint.GetHeight());
         return;
     }
-
-    // if (strcmp(argsArray[0], "10") == 0) {
-    //     Serial.println("e-Paper paint 10");
-    //     paint.SetWidth(200);
-    //     paint.SetHeight(24);
-    //     paint.Clear(COLORED);
-    //     paint.DrawStringAt(30, 4, "Hello world!", &Font16, UNCOLORED);
-    //     epd.SetFrameMemory(paint.GetImage(), 0, 10, paint.GetWidth(), paint.GetHeight());
-    //     return;
-    // }
-    // if (strcmp(argsArray[0], "20") == 0) {
-    //     Serial.println("e-Paper paint 20");
-    //     paint.SetWidth(200);
-    //     paint.SetHeight(24);
-    //     paint.Clear(UNCOLORED);
-    //     paint.DrawStringAt(30, 4, "e-Paper Demo", &Font16, COLORED);
-    //     epd.SetFrameMemory(paint.GetImage(), 0, 30, paint.GetWidth(), paint.GetHeight());
-    //     return;
-    // }
 
     if (strcmp(argsArray[0], "90") == 0) {
         paint.SetWidth(50);
         paint.SetHeight(60);
         paint.Clear(UNCOLORED);
-      
-        int x = int(argsArray[1]) || 80;
-        int y = int(argsArray[2]) || 70;
 
-        char i = 0;
+        // int i = 0;
         char str[10][10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        for (i = 0; i < 10; i++) {
-          paint.Clear(UNCOLORED);
-          paint.DrawStringAt(10, 10, str[i], &Font24, COLORED);
-          epd.SetFrameMemoryPartial(paint.GetImage(), x, y, paint.GetWidth(), paint.GetHeight());
-          epd.DisplayPartFrame();
-          delay(100);
+        for (int i = 0; i < 10; i++) {
+            Serial.println(i);
+            paint.Clear(UNCOLORED);
+            paint.DrawStringAt(10, 10, str[i], &Font24, COLORED);
+            Serial.println("30");
+            epd.SetFrameMemoryPartial(paint.GetImage(), 80, 70, paint.GetWidth(), paint.GetHeight());
+            Serial.println("40");
+            epd.DisplayPartFrame();
+            Serial.println("50");
+            delay(1000);
         }
-        return;      
+        return;
     }
 }
 
